@@ -345,18 +345,21 @@ export DESIRED_VERSION=v3.1.2;
 export HELM_DIFF_VERSION=v3.1.1;
 export HELMFILE_VERSION=v0.116.0;
 export USE_SUDO="false"
-
+export HELM_INSTALL_DIR="/app/bin"
+mkdir -p ${HELM_INSTALL_DIR}
+export PATH=$PATH:$HELM_INSTALL_DIR
 curl https://raw.githubusercontent.com/helm/helm/master/scripts/get-helm-3 | bash
 curl -LO https://storage.googleapis.com/kubernetes-release/release/`curl -s https://storage.googleapis.com/kubernetes-release/release/stable.txt`/bin/linux/amd64/kubectl
 chmod +x kubectl
-mv kubectl /usr/local/bin/kubectl
-wget https://github.com/roboll/helmfile/releases/download/${HELMFILE_VERSION}/helmfile_linux_amd64 -O /usr/local/bin/helmfile
-chmod +x /usr/local/bin/helmfile
+mv kubectl ${HELM_INSTALL_DIR}/kubectl
+wget https://github.com/roboll/helmfile/releases/download/${HELMFILE_VERSION}/helmfile_linux_amd64 -O ${HELM_INSTALL_DIR}/helmfile
+chmod +x ${HELM_INSTALL_DIR}/helmfile
 mkdir -p ~/.helm/plugins
 helm plugin install https://github.com/databus23/helm-diff --version ${HELM_DIFF_VERSION}
 curl -o aws-iam-authenticator https://amazon-eks.s3.us-west-2.amazonaws.com/1.15.10/2020-02-22/bin/linux/amd64/aws-iam-authenticator
 chmod +x ./aws-iam-authenticator
-cp ./aws-iam-authenticator /usr/local/bin/aws-iam-authenticator
+cp ./aws-iam-authenticator ${HELM_INSTALL_DIR}/aws-iam-authenticator
+
 
 meta_set "build-step" "finished"
 log_meta_data >> "$BUILDPACK_LOG_FILE"
